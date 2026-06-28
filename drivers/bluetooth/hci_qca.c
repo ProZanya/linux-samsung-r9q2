@@ -1694,6 +1694,12 @@ static int qca_regulator_init(struct hci_uart *hu)
 	 * off the voltage regulator.
 	 */
 	qcadev = serdev_device_get_drvdata(hu->serdev);
+
+	if (!qcadev || !qcadev->bt_power) {
+		bt_dev_err(hu->hdev, "qcadev or bt_power is NULL");
+		return -ENODEV;
+	}
+
 	if (!qcadev->bt_power->vregs_on) {
 		serdev_device_close(hu->serdev);
 		ret = qca_regulator_enable(qcadev);
