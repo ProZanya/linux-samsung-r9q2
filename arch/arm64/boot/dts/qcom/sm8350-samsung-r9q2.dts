@@ -55,7 +55,7 @@
 
 		// drm_kms_helper.fbdev_emulation=0
 		// fw_devlink=permissive
-		bootargs = "PMOS_NOSPLASH console=tty0 initcall_debug ignore_loglevel clk_ignore_unused pd_ignore_unused regulator_ignore_unused panic=10 loglevel=7";
+		bootargs = "PMOS_NOSPLASH console=tty0 ignore_loglevel clk_ignore_unused pd_ignore_unused regulator_ignore_unused panic=10 loglevel=7";
 		stdout-path = "display0";
 
 		framebuffer: framebuffer@e4000000 {
@@ -365,29 +365,40 @@
 };
 
 &usb_1 {
-	status = "okay";
+    /delete-property/ interconnects;
+    /delete-property/ interconnect-names;
+
+    status = "okay";
 };
 
 &usb_1_dwc3 {
-	dr_mode = "otg";
-	usb-role-switch;
-};
+    dr_mode = "otg";
+    usb-role-switch;
 
-&usb_1_dwc3_hs {
-	remote-endpoint = <&pmic_glink_hs_in>;
-};
-
-&usb_1_qmpphy_out {
-	remote-endpoint = <&pmic_glink_ss_in>;
-	status = "okay";
+    maximum-speed = "super-speed";
 };
 
 &usb_1_hsphy {
-	status = "okay";
+    status = "okay";
 
-	vdda-pll-supply = <&pm8350_l5>;
-	vdda18-supply = <&pm8350c_l1>;
-	vdda33-supply = <&pm8350_l2>;
+    vdda-pll-supply = <&pm8350_l5>;
+    vdda18-supply = <&pm8350c_l1>;
+    vdda33-supply = <&pm8350_l2>;
+};
+
+&usb_1_qmpphy {
+    status = "okay";
+
+    vdda-phy-supply = <&pm8350_l6>;
+    vdda-pll-supply = <&pm8350_l1>;
+};
+
+&usb_1_dwc3_ss {
+    remote-endpoint = <&usb_1_qmpphy_usb_ss_in>;
+};
+
+&usb_1_qmpphy_usb_ss_in {
+    remote-endpoint = <&usb_1_dwc3_ss>;
 };
 
 &usb_1_qmpphy {
@@ -1060,7 +1071,7 @@
 };
 
 &mdss_dp {
-	status = "disabled";
+	status = "okay";
 };
 
 &mdss_dsi0 {
